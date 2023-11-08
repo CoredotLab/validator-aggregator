@@ -4,10 +4,15 @@ export const useNavigation = () => {
   const router = useRouter();
 
   const goToApp = () => {
-    router.push("/app");
+    router.push("/app/list");
+  };
+
+  const goToProfile = () => {
+    router.push("/app/profile");
   };
 
   return {
     goToApp,
+    goToProfile,
   };
 };
