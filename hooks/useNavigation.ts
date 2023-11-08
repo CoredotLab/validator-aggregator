@@ -11,8 +11,13 @@ export const useNavigation = () => {
     router.push("/app/profile");
   };
 
+  const goToDetail = () => {
+    router.push("/app/detail");
+  };
+
   return {
     goToApp,
     goToProfile,
+    goToDetail,
   };
 };

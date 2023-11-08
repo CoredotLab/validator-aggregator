@@ -4,10 +4,12 @@ import { useNavigation } from "@/hooks/useNavigation";
 import Image from "next/image";
 
 export default function ValidatorListHome() {
-  const { goToProfile } = useNavigation();
+  const { goToProfile, goToDetail } = useNavigation();
+
   const handleBlockdaemonBtn = () => {
-    console.log("blockdaemon");
+    goToDetail();
   };
+
   const handleChartBtn = () => {
     goToProfile();
   };
