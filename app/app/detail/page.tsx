@@ -55,7 +55,15 @@ export default function DetailHome() {
       </button>
       {/* upper component */}
       <div className="flex flex-col md:mt-[42px] mt-[20px]">
-        <div className="text-white md:text-[24px] text-[12px] font-semibold font-['SUIT'] leading-normal">
+        <div className="text-white md:text-[24px] text-[12px] font-semibold font-['SUIT'] leading-normal flex items-center">
+          <div className="mr-2">
+            <Image
+              src="/images/icons/icon_blockdaemon.png"
+              width={25}
+              height={25}
+              alt="network_button"
+            />
+          </div>
           Blockdaemon
         </div>
         <div className="flex md:mt-[40px] mt-[20px] md:flex-row flex-col">
@@ -257,12 +265,12 @@ export default function DetailHome() {
             assets, blockchains, and open protocols that suffer from traditional
             financial structures.
             <br />
-            <br />A noticeable shift in Ethereum's application narrative has
-            coincided with the popularity of open finance tools for the product.
-            For example, according to a report by Bloqboard on public lending
-            protocols, active lending across four public lending protocols -
-            MakerDAO, Dharma, dYdX, and Compound Finance - increased by $12
-            million in 2018, reaching $72 million..
+            <br />A noticeable shift in Ethereum&apos;s application narrative
+            has coincided with the popularity of open finance tools for the
+            product. For example, according to a report by Bloqboard on public
+            lending protocols, active lending across four public lending
+            protocols - MakerDAO, Dharma, dYdX, and Compound Finance - increased
+            by $12 million in 2018, reaching $72 million..
           </div>
         </div>
       </div>

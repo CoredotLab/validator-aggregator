@@ -30,7 +30,15 @@ export default function ValidatorListHome() {
                 <div className="text-white text-xl font-semibold font-['SUIT'] leading-tight">
                   1.
                 </div>
-                <div className="text-white text-xl font-medium font-['SUIT'] leading-none ml-[22px]">
+                <div className=" ml-[22px]">
+                  <Image
+                    src="/images/icons/icon_blockdaemon.png"
+                    width={25}
+                    height={25}
+                    alt="network_button"
+                  />
+                </div>
+                <div className="text-white text-xl font-medium font-['SUIT'] leading-none ml-[12px]">
                   Blockdaemon
                 </div>
               </div>
@@ -52,10 +60,23 @@ export default function ValidatorListHome() {
         {/* wallet */}
         <div className="relative flex xl:w-[530px] w-[80%] md:h-[289px] h-[144px] bg-gradient-to-b from-blue-900 to-40% to-zinc-900 rounded-[15px] border border-slate-500 justify-center items-center">
           <div className="absolute top-0 w-full flex justify-between">
-            <div className="md:ml-[24px] ml-[12px] md:mt-[24px] mt-[12px]">
-              {/* <div className="text-blue-100 text-[21px] font-medium font-['SUIT']">
-                jewelkim.eth
-              </div> */}
+            <div className="md:ml-[24px] ml-[12px] md:mt-[24px] mt-[12px] flex items-center">
+              <div className="bg-white rounded-full p-1 mr-2">
+                <Image
+                  src="/images/icons/icon_metamask.png"
+                  width={32}
+                  height={32}
+                  alt="wallet"
+                  className="md:block hidden"
+                />
+                <Image
+                  src="/images/icons/icon_metamask.png"
+                  width={20}
+                  height={20}
+                  alt="wallet"
+                  className="md:hidden block"
+                />
+              </div>
               <div className="text-blue-100 md:text-[21px] text-[12px] font-medium font-['SUIT']">
                 0xB4fa...4092
               </div>
@@ -131,7 +152,15 @@ export default function ValidatorListHome() {
             className="flex justify-between items-center md:h-[100px] h-[50px]"
             onClick={handleBlockdaemonBtn}
           >
-            <div className="text-indigo-200 md:text-xl text-[12px] font-normal font-['SUIT'] leading-tight md:ml-[42px] ml-[21px]">
+            <div className="text-indigo-200 md:text-xl text-[12px] font-normal font-['SUIT'] leading-tight md:ml-[42px] ml-[21px] flex items-center">
+              <div className="mr-2">
+                <Image
+                  src="/images/icons/icon_blockdaemon.png"
+                  width={25}
+                  height={25}
+                  alt="network_button"
+                />
+              </div>
               Blockdaemon
             </div>
             <div className="flex md:space-x-[56px] space-x-[10px] md:mr-[42px] mr-[21px]">
