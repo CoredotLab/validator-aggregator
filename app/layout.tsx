@@ -4,6 +4,7 @@ import Header from "@/components/header";
 import BackgroundImage from "@/components/backgroundImage";
 import localFont from "next/font/local";
 import Footer from "@/components/footer";
+import dotenv from "dotenv";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -59,6 +60,8 @@ const suitFont = localFont({
     },
   ],
 });
+
+dotenv.config();
 
 export default function RootLayout({
   children,

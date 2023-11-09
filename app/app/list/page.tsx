@@ -1,10 +1,20 @@
 "use client";
 
+import { useWallet } from "@/hooks/useMetamask";
 import { useNavigation } from "@/hooks/useNavigation";
+import { UtilMethods } from "@/utils/util";
 import Image from "next/image";
+import { use, useEffect, useState } from "react";
+import Web3 from "web3";
+import axios from "axios";
 
 export default function ValidatorListHome() {
   const { goToProfile, goToDetail } = useNavigation();
+  const { requestAccount, isConnected, walletAddress } = useWallet();
+  const { getShortAddress } = UtilMethods();
+  const [addressTxt, setAddressTxt] = useState("");
+  const [balanceEth, setBalanceEth] = useState("0");
+  const [balanceEthUsd, setBalanceEthUsd] = useState("0");
 
   const handleBlockdaemonBtn = () => {
     goToDetail();
@@ -13,6 +23,55 @@ export default function ValidatorListHome() {
   const handleChartBtn = () => {
     goToProfile();
   };
+
+  useEffect(() => {
+    if (walletAddress) {
+      setAddressTxt(getShortAddress(walletAddress));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [walletAddress]);
+
+  useEffect(() => {
+    if (!window.ethereum) return;
+    if (isConnected) {
+      window.ethereum
+        .request({
+          method: "eth_getBalance",
+          params: [walletAddress, "latest"],
+        })
+        .then((result: any) => {
+          console.log("result", result);
+          const web3 = new Web3(window.ethereum);
+          const balance = web3.utils.fromWei(result, "ether");
+
+          setBalanceEth(balance.slice(0, 6));
+        })
+        .catch((error: any) => {
+          console.log(error);
+        });
+    }
+  }, [isConnected, walletAddress]);
+
+  useEffect(() => {
+    if (balanceEth === "0") {
+      setBalanceEthUsd("0");
+    }
+
+    const bithumbUrl = "https://api.bithumb.com/public/ticker/ETH_KRW";
+
+    axios
+      .get(bithumbUrl)
+      .then((response) => {
+        const data = response.data;
+        const price = data.data.closing_price;
+        const balance = (Number(balanceEth) * Number(price)) / 1309;
+
+        setBalanceEthUsd(balance.toFixed(3));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [balanceEth]);
 
   return (
     <main className="flex flex-col">
@@ -58,70 +117,76 @@ export default function ValidatorListHome() {
           <div className="w-full h-[1px] bg-slate-500" />
         </div>
         {/* wallet */}
-        <div className="relative flex xl:w-[530px] w-[80%] md:h-[289px] h-[144px] bg-gradient-to-b from-blue-900 to-40% to-zinc-900 rounded-[15px] border border-slate-500 justify-center items-center">
-          <div className="absolute top-0 w-full flex justify-between">
-            <div className="md:ml-[24px] ml-[12px] md:mt-[24px] mt-[12px] flex items-center">
-              <div className="bg-white rounded-full p-1 mr-2">
+        {isConnected && walletAddress ? (
+          <div className="relative flex xl:w-[530px] w-[80%] md:h-[289px] h-[144px] bg-gradient-to-b from-blue-900 to-40% to-zinc-900 rounded-[15px] border border-slate-500 justify-center items-center">
+            <div className="absolute top-0 w-full flex justify-between">
+              <div className="md:ml-[24px] ml-[12px] md:mt-[24px] mt-[12px] flex items-center">
+                <div className="bg-white rounded-full p-1 mr-2">
+                  <Image
+                    src="/images/icons/icon_metamask.png"
+                    width={32}
+                    height={32}
+                    alt="wallet"
+                    className="md:block hidden"
+                  />
+                  <Image
+                    src="/images/icons/icon_metamask.png"
+                    width={20}
+                    height={20}
+                    alt="wallet"
+                    className="md:hidden block"
+                  />
+                </div>
+                <div className="text-blue-100 md:text-[21px] text-[12px] font-medium font-['SUIT']">
+                  {addressTxt}
+                </div>
+              </div>
+              <button className="mr-[15px]" onClick={handleChartBtn}>
                 <Image
-                  src="/images/icons/icon_metamask.png"
+                  src="/images/icons/icon_chart.png"
                   width={32}
                   height={32}
-                  alt="wallet"
+                  alt="portfolio_button"
                   className="md:block hidden"
                 />
                 <Image
-                  src="/images/icons/icon_metamask.png"
+                  src="/images/icons/icon_chart.png"
                   width={20}
                   height={20}
-                  alt="wallet"
-                  className="md:hidden block"
+                  alt="portfolio_button"
+                  className="md:hidden block mt-[10px]"
                 />
+              </button>
+            </div>
+            <div className="flex flex-col items-end">
+              <div className="flex justify-between items-end w-full">
+                <div className="text-center text-white md:text-4xl text-lg font-semibold font-['SUIT']">
+                  {balanceEth}
+                </div>
+                <div className="text-blue-100 md:text-xl text-xs font-medium font-['SUIT'] ml-[21px]">
+                  ETH
+                </div>
               </div>
-              <div className="text-blue-100 md:text-[21px] text-[12px] font-medium font-['SUIT']">
-                0xB4fa...4092
+              <div className="flex justify-between items-end w-full md:mt-[23px]">
+                <div className="text-center text-white md:text-4xl text-lg font-semibold font-['SUIT']">
+                  $ {balanceEthUsd}
+                </div>
+                <div className="text-blue-100 md:text-xl text-xs font-medium font-['SUIT'] ml-[21px]">
+                  USD
+                </div>
               </div>
             </div>
-            <button className="mr-[15px]" onClick={handleChartBtn}>
-              <Image
-                src="/images/icons/icon_chart.png"
-                width={32}
-                height={32}
-                alt="portfolio_button"
-                className="md:block hidden"
-              />
-              <Image
-                src="/images/icons/icon_chart.png"
-                width={20}
-                height={20}
-                alt="portfolio_button"
-                className="md:hidden block mt-[10px]"
-              />
+          </div>
+        ) : (
+          <div className="relative flex xl:w-[530px] w-[80%] md:h-[289px] h-[144px] bg-gradient-to-b from-blue-900 to-40% to-zinc-900 rounded-[15px] border border-slate-500 justify-center items-center">
+            <button
+              onClick={requestAccount}
+              className="w-[161px] h-[53px] bg-blue-600 rounded-[41px] flex justify-center items-center text-center text-white text-xl font-bold"
+            >
+              Connect
             </button>
-            {/* <button className="w-1.5 h-8 relative mt-[24px] mr-[24px]">
-              <div className="w-1.5 h-1.5 left-0 top-0 absolute bg-blue-100 rounded-full"></div>
-              <div className="w-1.5 h-1.5 left-0 top-[13px] absolute bg-blue-100 rounded-full"></div>
-              <div className="w-1.5 h-1.5 left-0 top-[26px] absolute bg-blue-100 rounded-full"></div>
-            </button> */}
           </div>
-          <div className="flex flex-col items-end">
-            <div className="flex justify-between items-end w-full">
-              <div className="text-center text-white md:text-4xl text-lg font-semibold font-['SUIT']">
-                0.0045
-              </div>
-              <div className="text-blue-100 md:text-xl text-xs font-medium font-['SUIT'] ml-[21px]">
-                ETH
-              </div>
-            </div>
-            <div className="flex justify-between items-end w-full md:mt-[23px]">
-              <div className="text-center text-white md:text-4xl text-lg font-semibold font-['SUIT']">
-                $ 0.0045
-              </div>
-              <div className="text-blue-100 md:text-xl text-xs font-medium font-['SUIT'] ml-[21px]">
-                USD
-              </div>
-            </div>
-          </div>
-        </div>
+        )}
       </div>
       {/* all validators */}
       <div className="md:mt-[80px] mt-[40px] w-full flex flex-col items-center">

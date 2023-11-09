@@ -2,7 +2,10 @@
 
 import { usePathname } from "next/navigation";
 import { useNavigation } from "@/hooks/useNavigation";
+import { useWallet } from "@/hooks/useMetamask";
 import Image from "next/image";
+import { UtilMethods } from "@/utils/util";
+import { useEffect } from "react";
 
 export default function Header() {
   const pathname = usePathname();
@@ -35,6 +38,9 @@ const HomeHeader = () => {
 
 const AppHeader = () => {
   const { goToProfile } = useNavigation();
+  const { requestAccount, isConnected, walletAddress } = useWallet();
+  const { getShortAddress } = UtilMethods();
+
   const handleChartBtn = () => {
     goToProfile();
   };
@@ -45,7 +51,17 @@ const AppHeader = () => {
 
   const handleConnectBtn = () => {
     console.log("connect");
+    requestAccount();
   };
+
+  useEffect(() => {
+    console.log("HH");
+  }, []);
+
+  useEffect(() => {
+    console.log("HHwalletAddress", walletAddress);
+    console.log("HHisConnected", isConnected);
+  }, [walletAddress, isConnected]);
 
   return (
     <main className="w-full flex justify-end">
@@ -65,11 +81,14 @@ const AppHeader = () => {
           alt="network_button"
         />
       </button>
+
       <button
         onClick={handleConnectBtn}
         className="w-[161px] h-[53px] bg-blue-600 rounded-[41px] md:mr-[75px] flex justify-center items-center text-center text-white text-xl font-bold"
       >
-        Connect
+        {isConnected && walletAddress
+          ? getShortAddress(walletAddress)
+          : "Connect"}
       </button>
     </main>
   );

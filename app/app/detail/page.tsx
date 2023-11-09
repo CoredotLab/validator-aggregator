@@ -1,12 +1,18 @@
 "use client";
 
+import { useWallet } from "@/hooks/useMetamask";
 import { useNavigation } from "@/hooks/useNavigation";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Web3 from "web3";
 
 export default function DetailHome() {
   const { goToApp } = useNavigation();
   const [isStaking, setIsStaking] = useState(true);
+  const { requestAccount, isConnected, walletAddress } = useWallet();
+  const [balanceEth, setBalanceEth] = useState("0");
+  const [stakedAsset, setStakedAsset] = useState(0);
+  const [inputAsset, setInputAsset] = useState(0);
 
   const handleBackBtn = () => {
     goToApp();
@@ -27,6 +33,35 @@ export default function DetailHome() {
   const handleRequestWithdrawBtn = () => {
     console.log("staking");
   };
+
+  const handleInputAsset = (e: any) => {
+    setInputAsset(e.target.value);
+  };
+
+  useEffect(() => {
+    requestAccount();
+  }, []);
+
+  useEffect(() => {
+    if (!window.ethereum) return;
+    if (isConnected) {
+      window.ethereum
+        .request({
+          method: "eth_getBalance",
+          params: [walletAddress, "latest"],
+        })
+        .then((result: any) => {
+          console.log("result", result);
+          const web3 = new Web3(window.ethereum);
+          const balance = web3.utils.fromWei(result, "ether");
+
+          setBalanceEth(balance.slice(0, 6));
+        })
+        .catch((error: any) => {
+          console.log(error);
+        });
+    }
+  }, [isConnected, walletAddress]);
 
   return (
     <main className="xl:w-[1200px] w-[90%] mx-auto">
@@ -133,7 +168,7 @@ export default function DetailHome() {
                 </div>
                 <div className="flex items-end">
                   <div className="text-center text-white md:text-3xl text-[14px] font-medium font-['SUIT']">
-                    3.0123
+                    {stakedAsset}
                   </div>
                   <div className="text-blue-100 md:text-xl text-[12px] font-semibold font-['SUIT'] ml-2">
                     ETH
@@ -141,17 +176,20 @@ export default function DetailHome() {
                 </div>
               </div>
               {/* input form */}
-              <div className="w-full md:h-[54px] h-[27px] bg-blue-800 bg-opacity-50 mt-4 flex justify-between items-center px-5">
-                <div className="text-white text-[15px] font-bold font-['SUIT'] leading-[15px]">
-                  0
-                </div>
+              <form className="w-full md:h-[54px] h-[27px] bg-blue-800 bg-opacity-50 mt-4 flex justify-between items-center px-5">
+                <input
+                  type="float"
+                  placeholder="0"
+                  onChange={handleInputAsset}
+                  className="bg-transparent text-white text-[15px] font-bold font-['SUIT'] leading-[15px]"
+                ></input>
                 <div className="text-blue-100 text-opacity-50 text-[15px] font-semibold font-['SUIT'] leading-[15px]">
                   ETH
                 </div>
-              </div>
+              </form>
               {/* balance */}
               <div className="opacity-60 text-blue-100 md:text-[15px] text-[12px] font-semibold font-['SUIT'] leading-[15px] mt-2">
-                Balance: 1.23
+                Balance: {balanceEth} ETH
               </div>
               {/* 구분선 */}
               <div className="w-full h-[1px] bg-slate-500 mt-2" />

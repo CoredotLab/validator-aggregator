@@ -26,7 +26,6 @@ export default function BackgroundImage() {
       alt="background image"
       src={imagePath}
       fill
-      objectFit="cover"
       quality={100}
       priority={true}
       className="z-[-100]"

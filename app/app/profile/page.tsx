@@ -1,13 +1,31 @@
 "use client";
 
+import { useWallet } from "@/hooks/useMetamask";
 import { useNavigation } from "@/hooks/useNavigation";
+import { UtilMethods } from "@/utils/util";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
 export default function ProfileHome() {
   const { goToApp } = useNavigation();
+  const { requestAccount, isConnected, walletAddress } = useWallet();
+  const { getShortAddress } = UtilMethods();
+  const [addressTxt, setAddressTxt] = useState("");
+
   const handleBackBtn = () => {
     goToApp();
   };
+
+  useEffect(() => {
+    if (walletAddress) {
+      setAddressTxt(getShortAddress(walletAddress));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [walletAddress]);
+
+  useEffect(() => {
+    requestAccount();
+  }, []);
 
   return (
     <main className="xl:w-[1200px] w-[90%] mx-auto">
@@ -44,7 +62,7 @@ export default function ProfileHome() {
               alt="profile_avatar"
             />
           </div>
-          0xB4...D3
+          {addressTxt}
         </div>
         {/* cards */}
         <div className="flex md:mt-[20px] mt-[20px] md:flex-row flex-col md:justify-end md:space-y-0 space-y-4">
@@ -57,7 +75,7 @@ export default function ProfileHome() {
               </div>
               <div className="flex">
                 <div className="text-center text-white text-xl font-semibold font-['SUIT'] leading-tight">
-                  3.0123
+                  0
                 </div>
                 <div className="text-center text-blue-100 text-xl font-medium font-['SUIT'] leading-tight">
                   ETH
@@ -71,7 +89,7 @@ export default function ProfileHome() {
               </div>
               <div className="flex">
                 <div className="text-center text-white text-xl font-semibold font-['SUIT'] leading-tight">
-                  3.0123
+                  0
                 </div>
                 <div className="text-center text-blue-100 text-xl font-medium font-['SUIT'] leading-tight">
                   ETH
@@ -144,7 +162,7 @@ export default function ProfileHome() {
           </div>
           <div className="w-full h-[1px] bg-slate-500" />
           {/* list */}
-          <button className="flex justify-between items-center md:h-[100px] h-[50px]">
+          <div className="flex justify-between items-center md:h-[100px] h-[50px]">
             <div className="text-indigo-200 md:text-xl text-[12px] font-normal font-['SUIT'] leading-tight md:ml-[42px] ml-[21px] flex items-center">
               <div className="md:mr-2">
                 <Image
@@ -170,6 +188,8 @@ export default function ProfileHome() {
                     alt="claim_button"
                     className="md:block hidden"
                   />
+                </button>
+                <button>
                   <Image
                     src="/images/icons/icon_claim.png"
                     width={45}
@@ -216,7 +236,7 @@ export default function ProfileHome() {
                 />
               </div>
             </div>
-          </button>
+          </div>
           <div className="w-full h-[1px] bg-slate-500" />
         </div>
         {/* index */}
